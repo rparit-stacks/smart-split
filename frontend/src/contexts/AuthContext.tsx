@@ -11,11 +11,33 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ email: string; name: string } | null>(null);
+  // Initialize state from localStorage immediately
+  const getInitialAuth = () => {
+    try {
+      const storedAuth = localStorage.getItem('auth');
+      if (storedAuth) {
+        const authData = JSON.parse(storedAuth);
+        return {
+          isAuthenticated: true,
+          user: authData.user
+        };
+      }
+    } catch (error) {
+      console.error('Error reading auth from localStorage:', error);
+      localStorage.removeItem('auth');
+    }
+    return {
+      isAuthenticated: false,
+      user: null
+    };
+  };
+
+  const initialAuth = getInitialAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(initialAuth.isAuthenticated);
+  const [user, setUser] = useState<{ email: string; name: string } | null>(initialAuth.user);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
+    // Sync with localStorage on mount
     const storedAuth = localStorage.getItem('auth');
     if (storedAuth) {
       try {
@@ -24,14 +46,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(authData.user);
       } catch {
         localStorage.removeItem('auth');
+        setIsAuthenticated(false);
+        setUser(null);
       }
     }
   }, []);
 
   const login = (email: string, name: string) => {
+    console.log('🔐 AuthContext.login called with:', { email, name });
     setIsAuthenticated(true);
     setUser({ email, name });
-    localStorage.setItem('auth', JSON.stringify({ user: { email, name } }));
+    const authData = { user: { email, name } };
+    localStorage.setItem('auth', JSON.stringify(authData));
+    console.log('✅ Auth state updated:', { isAuthenticated: true, user: { email, name } });
   };
 
   const logout = () => {

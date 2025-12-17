@@ -60,18 +60,42 @@ const VerifyLoginOtp = () => {
     } else {
       // Extract name from response message
       const message = response.data || "";
-      const nameMatch = message.match(/Welcome (.+)/);
-      const name = nameMatch ? nameMatch[1] : "User";
+      console.log('📝 Response message:', message);
       
+      // Try different patterns to extract name
+      let name = "User";
+      const patterns = [
+        /Welcome (.+)/,
+        /Welcome (.+?)(?:\s|$)/,
+        /- Welcome (.+)/,
+        /successful - Welcome (.+)/
+      ];
+      
+      for (const pattern of patterns) {
+        const match = message.match(pattern);
+        if (match && match[1]) {
+          name = match[1].trim();
+          console.log('✅ Extracted name:', name);
+          break;
+        }
+      }
+      
+      console.log('🔐 Setting authentication for:', email, name);
       login(email, name);
       localStorage.removeItem('pendingLogin');
+      
+      // Verify auth was set
+      setTimeout(() => {
+        const stored = localStorage.getItem('auth');
+        console.log('💾 Stored auth after login:', stored);
+      }, 100);
       
       toast({
         title: "Login successful!",
         description: "Welcome back!",
       });
       
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     }
   };
 

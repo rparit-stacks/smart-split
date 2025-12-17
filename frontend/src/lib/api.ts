@@ -9,32 +9,47 @@ async function apiRequest<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
+  const url = `${API_BASE_URL}${endpoint}`;
+  console.log('🚀 API Request:', url, options.method || 'GET');
+  console.log('📦 Request Body:', options.body);
+  
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(url, {
       ...options,
+      credentials: 'include', // Include cookies for session-based authentication
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
       },
     });
 
+    console.log('📡 Response Status:', response.status, response.statusText);
+
     const data = await response.text();
+    console.log('📥 Response Data (raw):', data);
+    
     let parsedData: any;
     
     try {
       parsedData = data ? JSON.parse(data) : null;
+      console.log('✅ Parsed Data:', parsedData);
     } catch {
       parsedData = data;
+      console.log('⚠️ Could not parse as JSON, using raw data');
     }
 
     if (!response.ok) {
+      const errorMsg = typeof parsedData === 'string' ? parsedData : parsedData?.message || 'Request failed';
+      console.error('❌ API Error:', errorMsg);
       return {
-        error: typeof parsedData === 'string' ? parsedData : parsedData?.message || 'Request failed',
+        error: errorMsg,
       };
     }
 
+    console.log('✅ API Success');
     return { data: parsedData };
   } catch (error) {
+    console.error('💥 Network Error:', error);
     return {
       error: error instanceof Error ? error.message : 'Network error occurred',
     };
@@ -117,6 +132,68 @@ export const authApi = {
     return apiRequest<string>('/auth/resend-forgot-password-otp', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  },
+
+  logout: async () => {
+    return apiRequest<string>('/auth/logout', {
+      method: 'POST',
+    });
+  },
+};
+
+// User APIs
+export interface UserResponse {
+  id: string;
+  name: string;
+  address?: string;
+  age: number;
+  email: string;
+  phNumber: string;
+  profileUrl?: string;
+  role: string;
+}
+
+export interface UserRequest {
+  name?: string;
+  address?: string;
+  age?: number;
+  email?: string;
+  phNumber?: string;
+  profileUrl?: string;
+  password?: string;
+  role?: string;
+}
+
+export const userApi = {
+  getCurrentUser: async () => {
+    return apiRequest<UserResponse>('/users/me', {
+      method: 'GET',
+    });
+  },
+
+  getUser: async (id: string) => {
+    return apiRequest<UserResponse[]>(`/users/get-user?id=${id}`, {
+      method: 'GET',
+    });
+  },
+
+  updateUser: async (id: string, data: UserRequest) => {
+    return apiRequest<UserResponse>(`/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  getUserGroups: async (id: string) => {
+    return apiRequest<any[]>(`/users/get-user-groups?id=${id}`, {
+      method: 'GET',
+    });
+  },
+
+  getUserBalanceSummary: async (id: string) => {
+    return apiRequest<UserResponse>(`/users/get-user-balance-summary?id=${id}`, {
+      method: 'GET',
     });
   },
 };

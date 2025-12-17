@@ -1,20 +1,15 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { 
   Plus, 
   Users, 
   Receipt, 
   TrendingUp, 
   ArrowUpRight, 
-  ArrowDownLeft,
-  LogOut
+  ArrowDownLeft
 } from "lucide-react";
-import Logo from "@/components/Logo";
-import AuthButton from "@/components/AuthButton";
+import DashboardLayout from "@/components/DashboardLayout";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-
   const balances = [
     { name: "Alex", amount: 45.50, type: "owe" },
     { name: "Sarah", amount: 23.00, type: "owed" },
@@ -41,36 +36,27 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background safe-area-inset">
-      {/* Header */}
-      <motion.header
-        className="gradient-primary px-4 pt-4 pb-8 md:px-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between">
-            <Logo size="md" />
-            <button 
-              onClick={() => navigate("/login")}
-              className="p-2 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
-            >
-              <LogOut size={20} className="text-primary-foreground" />
-            </button>
+    <DashboardLayout>
+      <div className="min-h-screen bg-background safe-area-inset">
+        {/* Header */}
+        <motion.header
+          className="gradient-primary px-4 pt-4 pb-8 md:px-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="max-w-6xl mx-auto">
+            <div className="mt-8 text-center md:text-left">
+              <p className="text-primary-foreground/80">Your balance</p>
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-primary-foreground mt-1">
+                $156.25
+              </h1>
+              <p className="text-sm text-primary-foreground/70 mt-2">
+                You owe <span className="text-primary-foreground">$58.25</span> • 
+                You are owed <span className="text-primary-foreground">$214.50</span>
+              </p>
+            </div>
           </div>
-          
-          <div className="mt-8 text-center md:text-left">
-            <p className="text-primary-foreground/80">Your balance</p>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-primary-foreground mt-1">
-              $156.25
-            </h1>
-            <p className="text-sm text-primary-foreground/70 mt-2">
-              You owe <span className="text-primary-foreground">$58.25</span> • 
-              You are owed <span className="text-primary-foreground">$214.50</span>
-            </p>
-          </div>
-        </div>
-      </motion.header>
+        </motion.header>
 
       {/* Quick Actions */}
       <div className="px-4 md:px-8 -mt-4">
@@ -195,7 +181,8 @@ const Dashboard = () => {
       >
         <Plus size={24} className="text-primary-foreground" />
       </motion.button>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

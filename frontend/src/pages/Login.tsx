@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
@@ -10,6 +10,7 @@ import SocialButton from "@/components/SocialButton";
 import Divider from "@/components/Divider";
 import { useToast } from "@/hooks/use-toast";
 import { authApi } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -18,6 +19,19 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Don't render if already authenticated
+  if (isAuthenticated) {
+    return null;
+  }
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -40,29 +54,50 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🔵 Login form submitted');
+    console.log('📧 Email:', email);
+    console.log('🔒 Password length:', password.length);
     
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      console.log('❌ Form validation failed');
+      return;
+    }
     
+    console.log('✅ Form validated, making API call...');
     setIsLoading(true);
     
-    const response = await authApi.login({ email, password });
-    
+    try {
+      console.log('📤 Calling login API...');
+      const response = await authApi.login({ email, password });
+      console.log('📥 Login API response:', response);
+      
+      setIsLoading(false);
+      
+      if (response.error) {
+        console.error('❌ Login error:', response.error);
+        toast({
+          title: "Login failed",
+          description: response.error,
+          variant: "destructive",
+        });
+      } else {
+        console.log('✅ Login success, navigating to OTP page');
+    toast({
+          title: "OTP sent!",
+          description: "Please check your email for the OTP.",
+    });
+        // Store email for OTP verification
+        localStorage.setItem('pendingLogin', JSON.stringify({ email }));
+        navigate("/verify-login-otp");
+      }
+    } catch (error) {
+      console.error('💥 Login exception:', error);
     setIsLoading(false);
-    
-    if (response.error) {
       toast({
-        title: "Login failed",
-        description: response.error,
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "OTP sent!",
-        description: "Please check your email for the OTP.",
-      });
-      // Store email for OTP verification
-      localStorage.setItem('pendingLogin', JSON.stringify({ email }));
-      navigate("/verify-login-otp");
     }
   };
 

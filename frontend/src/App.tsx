@@ -14,6 +14,7 @@ import VerifyLoginOtp from "./pages/VerifyLoginOtp";
 import VerifyEmailOtp from "./pages/VerifyEmailOtp";
 import VerifyMobileOtp from "./pages/VerifyMobileOtp";
 import ForgotPassword from "./pages/ForgotPassword";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
                   </ProtectedRoute>
                 }
               />

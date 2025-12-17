@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, User, Phone } from "lucide-react";
@@ -10,6 +10,7 @@ import SocialButton from "@/components/SocialButton";
 import Divider from "@/components/Divider";
 import { useToast } from "@/hooks/use-toast";
 import { authApi } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -20,6 +21,19 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Don't render if already authenticated
+  if (isAuthenticated) {
+    return null;
+  }
 
   const validateForm = () => {
     const newErrors: { name?: string; email?: string; phNumber?: string; password?: string } = {};
@@ -54,31 +68,62 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     
-    if (!validateForm()) return;
+    console.log('🔵 ========== SIGNUP FORM SUBMITTED ==========');
+    console.log('👤 Name:', name);
+    console.log('📧 Email:', email);
+    console.log('📱 Phone:', phNumber);
+    console.log('🔒 Password length:', password.length);
+    console.log('📋 Current errors:', errors);
     
+    const isValid = validateForm();
+    console.log('✅ Validation result:', isValid);
+    console.log('📋 Errors after validation:', errors);
+    
+    if (!isValid) {
+      console.log('❌ Form validation failed - stopping submission');
+      return;
+    }
+    
+    console.log('✅ Form validated, making API call...');
     setIsLoading(true);
     
-    const response = await authApi.register({ name, email, phNumber, password });
-    
-    setIsLoading(false);
-    
-    if (response.error) {
+    try {
+      console.log('📤 Calling register API with data:', { name, email, phNumber, password: '***' });
+      const response = await authApi.register({ name, email, phNumber, password });
+      console.log('📥 Register API response:', response);
+      
+      setIsLoading(false);
+      
+      if (response.error) {
+        console.error('❌ Registration error:', response.error);
+        toast({
+          title: "Registration failed",
+          description: response.error,
+          variant: "destructive",
+        });
+      } else {
+        console.log('✅ Registration success, navigating to OTP page');
+        toast({
+          title: "Registration successful!",
+          description: "Please verify your email with the OTP sent to your email.",
+        });
+        // Store email and phone for OTP verification
+        localStorage.setItem('pendingVerification', JSON.stringify({ email, phNumber }));
+        navigate("/verify-email-otp");
+      }
+    } catch (error) {
+      console.error('💥 Registration exception:', error);
+      setIsLoading(false);
       toast({
-        title: "Registration failed",
-        description: response.error,
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Registration successful!",
-        description: "Please verify your email with the OTP sent to your email.",
-      });
-      // Store email and phone for OTP verification
-      localStorage.setItem('pendingVerification', JSON.stringify({ email, phNumber }));
-      navigate("/verify-email-otp");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background safe-area-inset">
@@ -152,7 +197,10 @@ const Signup = () => {
                 error={errors.password}
               />
 
-              <AuthButton type="submit" isLoading={isLoading}>
+              <AuthButton 
+                type="submit" 
+                isLoading={isLoading}
+              >
                 Create Account
               </AuthButton>
             </form>
@@ -279,6 +327,16 @@ const Signup = () => {
                 />
                 
                 <InputField
+                  label="Phone Number"
+                  type="tel"
+                  placeholder="+1234567890"
+                  icon={<Phone size={18} />}
+                  value={phNumber}
+                  onChange={(e) => setPhNumber(e.target.value)}
+                  error={errors.phNumber}
+                />
+                
+                <InputField
                   label="Password"
                   type="password"
                   placeholder="••••••••"
@@ -288,7 +346,10 @@ const Signup = () => {
                   error={errors.password}
                 />
 
-                <AuthButton type="submit" isLoading={isLoading}>
+                <AuthButton 
+                  type="submit" 
+                  isLoading={isLoading}
+                >
                   Create Account
                 </AuthButton>
               </form>
