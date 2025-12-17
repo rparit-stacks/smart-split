@@ -1,13 +1,19 @@
 package com.rps.smartsplit.service;
 
+import com.rps.smartsplit.config.CustomUserDetail;
 import com.rps.smartsplit.dto.GroupResponseDTO;
+import com.rps.smartsplit.config.CustomUserDetail;
 import com.rps.smartsplit.dto.UserRequestDTO;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.rps.smartsplit.dto.UserResponseDTO;
 import com.rps.smartsplit.model.Role;
 import com.rps.smartsplit.model.User;
 import com.rps.smartsplit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -218,6 +224,15 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
     }
 
+    /**
+     * Gets current authenticated user's details
+     */
+    public ResponseEntity<UserResponseDTO> getCurrentUser(String email) {
+        User user = getUserByEmail(email);
+        UserResponseDTO userResponseDTO = UserToUserDto(user);
+        return ResponseEntity.ok(userResponseDTO);
+    }
+
     public String verifyEmailOtp(String email, String otp){
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
@@ -275,7 +290,7 @@ public class UserService {
         }
         
         // Mark mobile as verified and clear mobile OTP
-        user.setMobileVerified(true);
+            user.setMobileVerified(true);
         user.setMobileOtp(null);
         user.setMobileOtpExpiry(null);
         
@@ -362,7 +377,7 @@ public class UserService {
         
         return user;
     }
-    
+
     /**
      * Resends login OTP
      */
@@ -442,6 +457,7 @@ public class UserService {
         return "Password reset OTP has been resent to " + email;
     }
 
+   
 //
 //    public ResponseEntity<List<UserResponseDTO>> getUsersByRole(String role) {
 //

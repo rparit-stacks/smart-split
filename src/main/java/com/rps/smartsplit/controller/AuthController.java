@@ -11,11 +11,17 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,6 +31,9 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+    
+    @Autowired(required = false)
+    private SecurityContextRepository securityContextRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody AuthDto.RegisterDto registerDto){
@@ -53,7 +62,7 @@ public class AuthController {
             if (authentication == null) {
                 return ResponseEntity.badRequest().body("Authentication failed");
             }
-
+            
             // If credentials are valid, send OTP
             String result = userService.sendLoginOtp(loginDto.getEmail());
             return ResponseEntity.ok(result);
@@ -68,20 +77,41 @@ public class AuthController {
     }
 
     @PostMapping("/verify-login-otp")
-    public ResponseEntity<?> verifyLoginOtp(@RequestBody AuthDto.VerifyLoginOtpDto verifyLoginOtpDto) {
+    public ResponseEntity<?> verifyLoginOtp(
+            @RequestBody AuthDto.VerifyLoginOtpDto verifyLoginOtpDto,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         try {
             // Verify OTP
             User user = userService.verifyLoginOtp(verifyLoginOtpDto.getEmail(), verifyLoginOtpDto.getOtp());
             
-            // Create authentication token and set in security context
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            user.getEmail(),
-                            user.getPassword()
-                    )
+            // Create UserDetails from the verified user
+            CustomUserDetail userDetails = new CustomUserDetail(user);
+            
+            // Create Authentication object directly (no need to re-authenticate)
+            // Credentials were already verified in /login endpoint
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null, // No password needed - already verified
+                    userDetails.getAuthorities()
             );
             
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Create and set SecurityContext
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            securityContext.setAuthentication(authentication);
+            
+            // Set it in SecurityContextHolder for current request
+            SecurityContextHolder.setContext(securityContext);
+            
+            // Save SecurityContext to HTTP session using Spring Security's repository
+            // If repository is not injected, use default HttpSessionSecurityContextRepository
+            SecurityContextRepository repo = securityContextRepository != null 
+                    ? securityContextRepository 
+                    : new HttpSessionSecurityContextRepository();
+            repo.saveContext(securityContext, request, response);
+            
+            System.out.println("✅ Authentication saved to session. Session ID: " + request.getSession().getId());
+            System.out.println("✅ User authenticated: " + user.getEmail());
             
             return ResponseEntity.ok("Login successful - Welcome " + user.getName());
             
@@ -102,8 +132,8 @@ public class AuthController {
     @PostMapping("/verify-email-otp")
     public ResponseEntity<?> verifyEmailOtp(@RequestBody AuthDto.VerifyEmailOtpDto verifyEmailOtpDto) {
         try {
-            String result = userService.verifyEmailOtp(verifyEmailOtpDto.getEmail(), verifyEmailOtpDto.getOtp());
-            return ResponseEntity.ok(result);
+        String result = userService.verifyEmailOtp(verifyEmailOtpDto.getEmail(), verifyEmailOtpDto.getOtp());
+        return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -192,7 +222,7 @@ public class AuthController {
     public ResponseEntity<?> resendForgotPasswordOtp(@RequestBody AuthDto.ForgotPasswordDto forgotPasswordDto) {
         try {
             String result = userService.resendForgotPasswordOtp(forgotPasswordDto.getEmail());
-            return ResponseEntity.ok(result);
+        return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
