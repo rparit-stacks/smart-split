@@ -3,6 +3,7 @@ package com.rps.smartsplit.controller;
 import com.rps.smartsplit.config.CustomUserDetail;
 import com.rps.smartsplit.dto.AuthDto;
 import com.rps.smartsplit.dto.UserRequestDTO;
+import com.rps.smartsplit.dto.UserResponseDTO;
 import com.rps.smartsplit.model.User;
 import com.rps.smartsplit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -113,7 +117,20 @@ public class AuthController {
             System.out.println("✅ Authentication saved to session. Session ID: " + request.getSession().getId());
             System.out.println("✅ User authenticated: " + user.getEmail());
             
-            return ResponseEntity.ok("Login successful - Welcome " + user.getName());
+            // Create UserResponseDTO
+            UserResponseDTO userResponseDTO = new UserResponseDTO();
+            userResponseDTO.setId(user.getId());
+            userResponseDTO.setName(user.getName());
+            userResponseDTO.setEmail(user.getEmail());
+            userResponseDTO.setPhNumber(user.getPhNumber());
+            userResponseDTO.setAge(user.getAge());
+            userResponseDTO.setRole(user.getRole().name());
+
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("message", "Login successful");
+            responseBody.put("user", userResponseDTO);
+
+            return ResponseEntity.ok(responseBody);
             
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -231,5 +248,3 @@ public class AuthController {
     }
 
 }
-
-

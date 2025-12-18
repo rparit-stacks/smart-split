@@ -1,6 +1,7 @@
 package com.rps.smartsplit.dto;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public class GroupResponseDTO {
@@ -11,6 +12,7 @@ public class GroupResponseDTO {
     private String profileUrl;
     private Instant createdAt;
     private Instant updatedAt;
+    private List<UserResponseDTO> members;
 
     public GroupResponseDTO() {
     }
@@ -69,6 +71,14 @@ public class GroupResponseDTO {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<UserResponseDTO> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<UserResponseDTO> members) {
+        this.members = members;
     }
 }
 

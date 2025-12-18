@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class GroupRequestDTO {
     private String name;
-    private UUID createdBy;
+
     private String description;
     private String profileUrl;
 
@@ -19,13 +19,6 @@ public class GroupRequestDTO {
         this.name = name;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
 
     public String getDescription() {
         return description;
