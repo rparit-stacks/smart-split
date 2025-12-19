@@ -1,5 +1,6 @@
 package com.rps.smartsplit.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -61,6 +62,7 @@ public class User {
 
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<ExpenseParticipant> expenseParticipantList;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -69,6 +71,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
+    @JsonIgnore
     private Set<Group> groups = new HashSet<>();
 
 

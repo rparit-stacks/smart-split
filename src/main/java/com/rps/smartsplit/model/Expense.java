@@ -1,5 +1,6 @@
 package com.rps.smartsplit.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class Expense {
     private Category category;
 
     @OneToMany(mappedBy = "expense")
+    @JsonIgnore
     private List<ExpenseParticipant> expenseParticipants;
 
     private Instant expenseDate;

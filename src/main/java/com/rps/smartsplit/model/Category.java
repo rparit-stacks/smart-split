@@ -1,5 +1,6 @@
 package com.rps.smartsplit.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
@@ -24,6 +25,7 @@ public class Category {
     }
 
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     private List<Expense> expenses;
 
 

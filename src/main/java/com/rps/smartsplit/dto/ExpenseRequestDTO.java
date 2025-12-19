@@ -1,7 +1,10 @@
 package com.rps.smartsplit.dto;
 
+import com.rps.smartsplit.model.SplitType;
+
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public class ExpenseRequestDTO {
@@ -12,6 +15,8 @@ public class ExpenseRequestDTO {
     private String title;
     private String description;
     private BigDecimal amount;
+    private SplitType splitType;
+    private List<ExpenseParticipantRequestDTO> participants;
 
     public ExpenseRequestDTO() {
     }
@@ -70,6 +75,22 @@ public class ExpenseRequestDTO {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public SplitType getSplitType() {
+        return splitType;
+    }
+
+    public void setSplitType(SplitType splitType) {
+        this.splitType = splitType;
+    }
+
+    public List<ExpenseParticipantRequestDTO> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<ExpenseParticipantRequestDTO> participants) {
+        this.participants = participants;
     }
 }
 

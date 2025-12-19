@@ -1,5 +1,6 @@
 package com.rps.smartsplit.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 
@@ -19,6 +20,7 @@ public class ExpenseParticipant {
     private Expense expense;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 

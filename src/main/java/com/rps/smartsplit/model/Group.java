@@ -1,5 +1,6 @@
 package com.rps.smartsplit.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -14,26 +15,19 @@ public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     private String name;
     private UUID createdBy;
 
-
     @ManyToMany(mappedBy = "groups")
+    @JsonIgnore
     private Set<User> users = new HashSet<>();
-
     @OneToMany(mappedBy = "group")
+    @JsonIgnore
     private List<Expense> expenses;
 
-
     private String description;
-
     private String profileUrl;
-
-
-
     private Instant createdAt;
-
     private Instant updatedAt;
 
     public Group() {
@@ -109,5 +103,15 @@ public class Group {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+        user.getGroups().add(this);
+    }
+
+    public void removeUser(User user) {
+        this.users.remove(user);
+        user.getGroups().remove(this);
     }
 }

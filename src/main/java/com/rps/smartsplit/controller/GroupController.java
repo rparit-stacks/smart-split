@@ -1,19 +1,14 @@
 package com.rps.smartsplit.controller;
 
-import com.rps.smartsplit.config.CustomUserDetail;
 import com.rps.smartsplit.dto.GroupRequestDTO;
 import com.rps.smartsplit.dto.GroupResponseDTO;
 import com.rps.smartsplit.dto.UserResponseDTO;
-import com.rps.smartsplit.model.Group;
 import com.rps.smartsplit.service.GroupService;
-import com.rps.smartsplit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,9 +19,6 @@ public class GroupController {
 
     @Autowired
     private GroupService groupService;
-
-    @Autowired
-    private UserService userService;
 
     /**
      * -------------------------------------------------------------------
@@ -115,35 +107,151 @@ public class GroupController {
      */
     @PostMapping("/{id}/leave")
     public ResponseEntity<String> leaveGroup(@PathVariable UUID id) {
-        UUID currentUserId = userService.getLoggedInUser().getId();
-        groupService.leaveGroup(id, currentUserId);
+        groupService.leaveGroup(id);
         return ResponseEntity.ok("Left group successfully");
     }
 
+    /**
+     * GET /api/groups
+     * List all groups (for current user)
+     */
+    @GetMapping
+    public ResponseEntity<?> getAllGroups() {
+        try {
+            List<GroupResponseDTO> groups = groupService.getAllGroups();
+
+            if (groups.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+
+            return ResponseEntity.ok(groups);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch groups");
+        }
+    }
 
 
+    /**
+     * GET /api/groups/{id}/expenses
+     * Get group expenses (list all expenses in group)
+     */
+    @GetMapping("/{id}/expenses")
+    public ResponseEntity<?> getGroupExpenses(@PathVariable UUID id) {
+        try {
+            List<?> expenses = groupService.getExpensesByGroupId(id);
+
+            if (expenses == null || expenses.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+
+            return ResponseEntity.ok(expenses);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch group expenses");
+        }
+    }
 
 
+    /**
+     * GET /api/groups/{id}/balances
+     * Get group balances (show who owes whom in this group)
+     */
+    @GetMapping("/{id}/balances")
+    public ResponseEntity<?> getGroupBalances(@PathVariable UUID id) {
+        try {
+            return ResponseEntity.ok(
+                    groupService.getGroupBalancesWithSettlements(id)
+            );
+    
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+    
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch group balances");
+        }
+    }
+    
+
+    /**
+     * GET /api/groups/{id}/members
+     * Get group members (list all members with their details)
+     */
+    @GetMapping("/{id}/members")
+    public ResponseEntity<?> getGroupMembers(@PathVariable UUID id) {
+        try {
+            List<UserResponseDTO> members = groupService.getGroupMembers(id);
+
+            if (members == null || members.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+
+            return ResponseEntity.ok(members);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Group not found");
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch group members");
+        }
+    }
 
 
+    /**
+     * GET /api/groups/{id}/settlements
+     * Get group settlements (payment history within group)
+     */
+    @GetMapping("/{id}/settlements")
+    public ResponseEntity<?> getGroupSettlements(@PathVariable UUID id) {
+        try {
+            return ResponseEntity.ok(
+                    groupService.getSettlementsByGroupId(id)
+            );
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch group settlements");
+        }
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * GET /api/groups/{id}/summary
+     * Get group summary (total expenses, balances, recent activity)
+     */
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<?> getGroupSummary(@PathVariable UUID id) {
+        try {
+            return ResponseEntity.ok(groupService.getGroupSummary(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch group summary");
+        }
+    }
 
 }

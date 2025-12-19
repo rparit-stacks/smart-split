@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,9 +32,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private GroupService groupService;
 
     @Autowired
     private EmailService emailService;
@@ -139,7 +137,18 @@ public class UserService {
 
         
         List<GroupResponseDTO> groupResponseDTOs = user.getGroups().stream()
-                .map(groupService::groupToGroupDto)
+                .map(group -> {
+                    GroupResponseDTO dto = new GroupResponseDTO();
+                    dto.setId(group.getId());
+                    dto.setName(group.getName());
+                    dto.setCreatedBy(group.getCreatedBy());
+                    dto.setDescription(group.getDescription());
+                    dto.setProfileUrl(group.getProfileUrl());
+                    dto.setCreatedAt(group.getCreatedAt());
+                    dto.setUpdatedAt(group.getUpdatedAt());
+                    dto.setMembers(getUserListByGroupId(group.getId()));
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(groupResponseDTOs);
@@ -480,6 +489,23 @@ public class UserService {
         return getUserByEmail(userDetails.getUsername());
     }
 
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public List<UserResponseDTO> getUserListByGroupId(UUID groupId) {
+        List<UserResponseDTO> members = new ArrayList<>();
+
+        List<User> UserList = userRepository.findUsersByGroupId(groupId);
+        for(User user : UserList){
+            members.add(UserToUserDto(user));
+        }
+        return members;
+    }
+
+    public User getUserByUserId(UUID userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
 
 
 //
