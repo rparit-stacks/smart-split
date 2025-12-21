@@ -9,8 +9,17 @@ public class CategoryResponseDTO {
     private String description;
     private String color;
     private Instant createdAt;
+    private UUID adminId;
 
     public CategoryResponseDTO() {
+    }
+
+    public UUID getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(UUID adminId) {
+        this.adminId = adminId;
     }
 
     public UUID getId() {
