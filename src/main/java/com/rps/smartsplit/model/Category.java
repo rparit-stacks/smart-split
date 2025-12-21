@@ -16,25 +16,41 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @OneToMany(mappedBy = "category")
+    @JsonIgnore
+    private List<Expense> expenses;
+    private String name;
+    private String description;
+    private String color;
+    private Instant createdAt;
+    private UUID adminId;
+    private Instant updateAt;
+
+
+    public Category() {
+    }
+
+    public Instant getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Instant updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    public UUID getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(UUID adminId) {
+        this.adminId = adminId;
+    }
     public void setId(UUID id) {
         this.id = id;
     }
 
     public UUID getId() {
         return id;
-    }
-
-    @OneToMany(mappedBy = "category")
-    @JsonIgnore
-    private List<Expense> expenses;
-
-
-    private String name;
-    private String description;
-    private String color;
-    private Instant createdAt;
-
-    public Category() {
     }
 
     public List<Expense> getExpenses() {
