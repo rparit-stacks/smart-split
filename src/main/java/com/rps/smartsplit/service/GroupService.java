@@ -45,9 +45,6 @@ public class GroupService {
         group.setName(groupRequestDTO.getName());
         group.setDescription(groupRequestDTO.getDescription());
         group.setProfileUrl(groupRequestDTO.getProfileUrl());
-        group.setCreatedBy(creator.getId());
-        group.setCreatedAt(Instant.now());
-        group.setUpdatedAt(Instant.now());
 
         group.addUser(creator);
         return saveGroupAndUser(group, creator);
@@ -59,7 +56,6 @@ public class GroupService {
         group.setName(groupRequestDTO.getName());
         group.setDescription(groupRequestDTO.getDescription());
         group.setProfileUrl(groupRequestDTO.getProfileUrl());
-        group.setUpdatedAt(Instant.now());
         Group updatedGroup = groupRepository.save(group);
         return groupToGroupDto(updatedGroup);
     }
@@ -139,7 +135,7 @@ public class GroupService {
         GroupResponseDTO dto = new GroupResponseDTO();
         dto.setId(group.getId());
         dto.setName(group.getName());
-        dto.setCreatedBy(group.getCreatedBy());
+        dto.setCreatedBy(group.getCreatedUser() != null ? group.getCreatedUser().getId() : null);
         dto.setDescription(group.getDescription());
         dto.setProfileUrl(group.getProfileUrl());
         dto.setCreatedAt(group.getCreatedAt());
@@ -254,7 +250,7 @@ public class GroupService {
         response.setUserSummaries(userSummaries);
 
         return response;
-    }
+    }   
 
     /**
      * Calculate balances from expenses
