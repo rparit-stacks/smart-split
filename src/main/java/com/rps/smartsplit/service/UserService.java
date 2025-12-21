@@ -4,6 +4,7 @@ import com.rps.smartsplit.config.CustomUserDetail;
 import com.rps.smartsplit.dto.GroupResponseDTO;
 import com.rps.smartsplit.config.CustomUserDetail;
 import com.rps.smartsplit.dto.UserRequestDTO;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,9 @@ public class UserService {
 
     @Autowired
     private OTPService otpService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
 
 
@@ -141,7 +145,7 @@ public class UserService {
                     GroupResponseDTO dto = new GroupResponseDTO();
                     dto.setId(group.getId());
                     dto.setName(group.getName());
-                    dto.setCreatedBy(group.getCreatedBy());
+                    dto.setCreatedBy(group.getCreatedUser() != null ? group.getCreatedUser().getId() : null);
                     dto.setDescription(group.getDescription());
                     dto.setProfileUrl(group.getProfileUrl());
                     dto.setCreatedAt(group.getCreatedAt());
@@ -508,8 +512,24 @@ public class UserService {
     }
 
 
-//
-//    public ResponseEntity<List<UserResponseDTO>> getUsersByRole(String role) {
-//
-//    }
+
+    public List<UserResponseDTO> getUsersByRole(String role) {
+
+        Role userRole;
+        try {
+            userRole = Role.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid role: " + role);
+        }
+
+        List<User> users = userRepository.findByRole(userRole);
+
+        return users.stream()
+                .map(user -> {
+                    UserResponseDTO dto = modelMapper.map(user, UserResponseDTO.class);
+                    dto.setRole(user.getRole().name());
+                    return dto;
+                })
+                .toList();
+    }
 }
