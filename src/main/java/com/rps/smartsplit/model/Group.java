@@ -3,7 +3,6 @@ package com.rps.smartsplit.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,12 +10,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "groups")
-public class Group {
+public class Group extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private UUID createdBy;
 
     @ManyToMany(mappedBy = "groups")
     @JsonIgnore
@@ -27,8 +25,6 @@ public class Group {
 
     private String description;
     private String profileUrl;
-    private Instant createdAt;
-    private Instant updatedAt;
 
     public Group() {
     }
@@ -49,13 +45,7 @@ public class Group {
         this.name = name;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
-    }
 
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
 
     public Set<User> getUsers() {
         return users;
@@ -87,22 +77,6 @@ public class Group {
 
     public void setProfileUrl(String profileUrl) {
         this.profileUrl = profileUrl;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public void addUser(User user) {
