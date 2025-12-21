@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "expenses")
-public class Expense {
+public class Expense extends  Audit{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -33,9 +33,7 @@ public class Expense {
 
     private Instant expenseDate;
 
-    private Instant createdAt;
 
-    private Instant updatedAt;
 
     private String title;
 
@@ -92,21 +90,6 @@ public class Expense {
         this.expenseDate = expenseDate;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 
     public String getTitle() {
         return title;
