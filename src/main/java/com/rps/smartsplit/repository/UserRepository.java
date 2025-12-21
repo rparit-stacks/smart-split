@@ -1,5 +1,6 @@
 package com.rps.smartsplit.repository;
 
+import com.rps.smartsplit.dto.UserResponseDTO;
 import com.rps.smartsplit.model.Role;
 import com.rps.smartsplit.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +23,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query(value = "SELECT u.* FROM users u JOIN user_group ug ON u.id = ug.user_id WHERE ug.group_id = :groupId", nativeQuery = true)
     List<User> findUsersByGroupId(UUID groupId);
+
 
 }
