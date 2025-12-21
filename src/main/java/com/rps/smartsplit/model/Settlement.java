@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "settlements")
-public class Settlement {
+public class Settlement extends Audit {
 //    Settlement {
 //        UUID id PK
 //        UUID groupId FK
@@ -40,7 +40,6 @@ public class Settlement {
     private BigDecimal amount;
     private String description;
     private Instant settlementDate;
-    private Instant createdAt;
 
     public Settlement() {
     }
@@ -99,13 +98,5 @@ public class Settlement {
 
     public void setSettlementDate(Instant settlementDate) {
         this.settlementDate = settlementDate;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
     }
 }
