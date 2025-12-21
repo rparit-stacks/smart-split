@@ -30,8 +30,6 @@ public class ExpenseService {
         dto.setTitle(expense.getTitle());
         dto.setDescription(expense.getDescription());
         dto.setAmount(expense.getAmount());
-        dto.setCreatedAt(expense.getCreatedAt());
-        dto.setUpdatedAt(expense.getUpdatedAt());
         return dto;
     }
 
