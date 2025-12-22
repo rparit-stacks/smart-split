@@ -78,6 +78,24 @@ public class User extends Audit {
     private Boolean isEmailVerified = false;
     private  Boolean isMobileVerified = false;
 
+    // Settings fields
+    private String currency = "USD"; // Default currency
+    private String language = "en"; // Default language
+    
+    // Notification settings
+    private Boolean emailNotifications = true;
+    private Boolean pushNotifications = true;
+    private Boolean smsNotifications = false;
+    private Boolean expenseReminders = true;
+    private Boolean settlementReminders = true;
+    private Boolean groupInvites = true;
+    
+    // Privacy settings
+    private Boolean profileVisible = true;
+    private Boolean emailVisible = false;
+    private Boolean phoneVisible = false;
+    private Boolean showInSearch = true;
+
 
     public Boolean getEmailVerified() {
         return isEmailVerified;
@@ -264,5 +282,104 @@ public class User extends Audit {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    // Settings getters and setters
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    // Notification settings getters and setters
+    public Boolean getEmailNotifications() {
+        return emailNotifications != null ? emailNotifications : true;
+    }
+
+    public void setEmailNotifications(Boolean emailNotifications) {
+        this.emailNotifications = emailNotifications;
+    }
+
+    public Boolean getPushNotifications() {
+        return pushNotifications != null ? pushNotifications : true;
+    }
+
+    public void setPushNotifications(Boolean pushNotifications) {
+        this.pushNotifications = pushNotifications;
+    }
+
+    public Boolean getSmsNotifications() {
+        return smsNotifications != null ? smsNotifications : false;
+    }
+
+    public void setSmsNotifications(Boolean smsNotifications) {
+        this.smsNotifications = smsNotifications;
+    }
+
+    public Boolean getExpenseReminders() {
+        return expenseReminders != null ? expenseReminders : true;
+    }
+
+    public void setExpenseReminders(Boolean expenseReminders) {
+        this.expenseReminders = expenseReminders;
+    }
+
+    public Boolean getSettlementReminders() {
+        return settlementReminders != null ? settlementReminders : true;
+    }
+
+    public void setSettlementReminders(Boolean settlementReminders) {
+        this.settlementReminders = settlementReminders;
+    }
+
+    public Boolean getGroupInvites() {
+        return groupInvites != null ? groupInvites : true;
+    }
+
+    public void setGroupInvites(Boolean groupInvites) {
+        this.groupInvites = groupInvites;
+    }
+
+    // Privacy settings getters and setters
+    public Boolean getProfileVisible() {
+        return profileVisible != null ? profileVisible : true;
+    }
+
+    public void setProfileVisible(Boolean profileVisible) {
+        this.profileVisible = profileVisible;
+    }
+
+    public Boolean getEmailVisible() {
+        return emailVisible != null ? emailVisible : false;
+    }
+
+    public void setEmailVisible(Boolean emailVisible) {
+        this.emailVisible = emailVisible;
+    }
+
+    public Boolean getPhoneVisible() {
+        return phoneVisible != null ? phoneVisible : false;
+    }
+
+    public void setPhoneVisible(Boolean phoneVisible) {
+        this.phoneVisible = phoneVisible;
+    }
+
+    public Boolean getShowInSearch() {
+        return showInSearch != null ? showInSearch : true;
+    }
+
+    public void setShowInSearch(Boolean showInSearch) {
+        this.showInSearch = showInSearch;
     }
 }

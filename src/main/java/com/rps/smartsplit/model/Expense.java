@@ -27,6 +27,8 @@ public class Expense extends  Audit{
     @JoinColumn(name = "category_id")
     private Category category;
 
+    private SplitType splitType;
+
     @OneToMany(mappedBy = "expense")
     @JsonIgnore
     private List<ExpenseParticipant> expenseParticipants;
@@ -41,6 +43,15 @@ public class Expense extends  Audit{
 
     private BigDecimal amount;
 
+    private String receiptUrl;
+
+    public SplitType getSplitType() {
+        return splitType;
+    }
+
+    public void setSplitType(SplitType splitType) {
+        this.splitType = splitType;
+    }
 
     public UUID getId() {
         return id;
@@ -113,5 +124,13 @@ public class Expense extends  Audit{
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getReceiptUrl() {
+        return receiptUrl;
+    }
+
+    public void setReceiptUrl(String receiptUrl) {
+        this.receiptUrl = receiptUrl;
     }
 }
