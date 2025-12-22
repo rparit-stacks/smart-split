@@ -1,8 +1,8 @@
 package com.rps.smartsplit.controller;
 
-import com.rps.smartsplit.dto.GroupRequestDTO;
-import com.rps.smartsplit.dto.GroupResponseDTO;
-import com.rps.smartsplit.dto.UserResponseDTO;
+import com.rps.smartsplit.dto.request.GroupRequestDTO;
+import com.rps.smartsplit.dto.response.GroupResponseDTO;
+import com.rps.smartsplit.dto.response.UserResponseDTO;
 import com.rps.smartsplit.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
