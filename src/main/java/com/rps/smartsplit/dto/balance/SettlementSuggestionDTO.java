@@ -3,14 +3,15 @@ package com.rps.smartsplit.dto.balance;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class BalanceDTO {
+public class SettlementSuggestionDTO {
     private UUID fromUserId;
     private String fromUserName;
     private UUID toUserId;
     private String toUserName;
     private BigDecimal amount;
+    private String reason; // e.g., "Minimizes transactions", "Settles multiple debts"
 
-    public BalanceDTO() {
+    public SettlementSuggestionDTO() {
     }
 
     public UUID getFromUserId() {
@@ -51,6 +52,14 @@ public class BalanceDTO {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }
 

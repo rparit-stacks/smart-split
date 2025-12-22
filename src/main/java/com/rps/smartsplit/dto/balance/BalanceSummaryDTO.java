@@ -1,32 +1,15 @@
 package com.rps.smartsplit.dto.balance;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.List;
 
-public class UserBalanceDTO {
-    private UUID userId;
-    private String userName;
+public class BalanceSummaryDTO {
     private BigDecimal totalOwed;
     private BigDecimal totalOwing;
     private BigDecimal netBalance;
+    private List<GroupBalanceSummaryDTO> byGroup;
 
-    public UserBalanceDTO() {
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public BalanceSummaryDTO() {
     }
 
     public BigDecimal getTotalOwed() {
@@ -51,6 +34,14 @@ public class UserBalanceDTO {
 
     public void setNetBalance(BigDecimal netBalance) {
         this.netBalance = netBalance;
+    }
+
+    public List<GroupBalanceSummaryDTO> getByGroup() {
+        return byGroup;
+    }
+
+    public void setByGroup(List<GroupBalanceSummaryDTO> byGroup) {
+        this.byGroup = byGroup;
     }
 }
 

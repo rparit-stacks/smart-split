@@ -1,4 +1,4 @@
-package com.rps.smartsplit.dto;
+package com.rps.smartsplit.dto.balance;
 
 import java.math.BigDecimal;
 

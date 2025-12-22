@@ -3,14 +3,13 @@ package com.rps.smartsplit.dto.balance;
 import java.util.List;
 import java.util.UUID;
 
-public class GroupBalancesResponseDTO {
+public class GroupBalanceInfoDTO {
     private UUID groupId;
     private String groupName;
     private List<BalanceDTO> balances;
-    private GroupBalanceSummaryDTO summary;
-    private List<UserBalanceDTO> userSummaries;
+    private UserBalanceDTO userBalance;
 
-    public GroupBalancesResponseDTO() {
+    public GroupBalanceInfoDTO() {
     }
 
     public UUID getGroupId() {
@@ -37,20 +36,12 @@ public class GroupBalancesResponseDTO {
         this.balances = balances;
     }
 
-    public GroupBalanceSummaryDTO getSummary() {
-        return summary;
+    public UserBalanceDTO getUserBalance() {
+        return userBalance;
     }
 
-    public void setSummary(GroupBalanceSummaryDTO summary) {
-        this.summary = summary;
-    }
-
-    public List<UserBalanceDTO> getUserSummaries() {
-        return userSummaries;
-    }
-
-    public void setUserSummaries(List<UserBalanceDTO> userSummaries) {
-        this.userSummaries = userSummaries;
+    public void setUserBalance(UserBalanceDTO userBalance) {
+        this.userBalance = userBalance;
     }
 }
 
