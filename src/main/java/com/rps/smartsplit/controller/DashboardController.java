@@ -1,22 +1,37 @@
 package com.rps.smartsplit.controller;
 
+import com.rps.smartsplit.dto.balance.BalanceSummaryDTO;
+import com.rps.smartsplit.dto.dashboard.RecentActivityDTO;
+import com.rps.smartsplit.dto.dashboard.StatisticsDTO;
+import com.rps.smartsplit.dto.dashboard.QuickStatsDTO;
+import com.rps.smartsplit.dto.common.GroupSummaryDTO;
+import com.rps.smartsplit.dto.balance.BalanceDTO;
+import com.rps.smartsplit.dto.dashboard.DashboardResponseDTO;
+import com.rps.smartsplit.service.DashboardService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/dashboard")
+@RequiredArgsConstructor
 public class DashboardController {
+
+    private final DashboardService dashboardService;
 
     /**
      * GET /api/dashboard
      * Get user dashboard data (all data in one call)
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getDashboard() {
-        // TODO: Implement dashboard data aggregation
-        return null;
+    public ResponseEntity<DashboardResponseDTO> getDashboard() {
+        try {
+            return ResponseEntity.ok(dashboardService.getDashboard());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -24,19 +39,25 @@ public class DashboardController {
      * Get balance summary (total owe, total owed, by group, net balance)
      */
     @GetMapping("/balances")
-    public ResponseEntity<Map<String, Object>> getBalanceSummary() {
-        // TODO: Implement balance summary
-        return null;
+    public ResponseEntity<BalanceSummaryDTO> getBalanceSummary() {
+        try {
+            return ResponseEntity.ok(dashboardService.getBalanceSummary());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * GET /api/dashboard/recent-activity
-     * Get recent activity (last 10-20 expenses and settlements)
+     * Get recent activity (last 15 expenses and settlements)
      */
     @GetMapping("/recent-activity")
-    public ResponseEntity<Map<String, Object>> getRecentActivity() {
-        // TODO: Implement recent activity
-        return null;
+    public ResponseEntity<RecentActivityDTO> getRecentActivity() {
+        try {
+            return ResponseEntity.ok(dashboardService.getRecentActivity());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -44,9 +65,12 @@ public class DashboardController {
      * Get user statistics (total spent, categories breakdown, expense count)
      */
     @GetMapping("/statistics")
-    public ResponseEntity<Map<String, Object>> getStatistics() {
-        // TODO: Implement statistics
-        return null;
+    public ResponseEntity<StatisticsDTO> getStatistics() {
+        try {
+            return ResponseEntity.ok(dashboardService.getStatistics());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -54,9 +78,12 @@ public class DashboardController {
      * Get groups summary (list of groups with member count, recent activity)
      */
     @GetMapping("/groups-summary")
-    public ResponseEntity<Map<String, Object>> getGroupsSummary() {
-        // TODO: Implement groups summary
-        return null;
+    public ResponseEntity<List<GroupSummaryDTO>> getGroupsSummary() {
+        try {
+            return ResponseEntity.ok(dashboardService.getGroupsSummary());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -64,9 +91,12 @@ public class DashboardController {
      * Get upcoming settlements (debts that need to be settled)
      */
     @GetMapping("/upcoming-settlements")
-    public ResponseEntity<Map<String, Object>> getUpcomingSettlements() {
-        // TODO: Implement upcoming settlements
-        return null;
+    public ResponseEntity<List<BalanceDTO>> getUpcomingSettlements() {
+        try {
+            return ResponseEntity.ok(dashboardService.getUpcomingSettlements());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -74,9 +104,12 @@ public class DashboardController {
      * Get quick statistics (total expenses, total groups, active balances)
      */
     @GetMapping("/quick-stats")
-    public ResponseEntity<Map<String, Object>> getQuickStats() {
-        // TODO: Implement quick stats
-        return null;
+    public ResponseEntity<QuickStatsDTO> getQuickStats() {
+        try {
+            return ResponseEntity.ok(dashboardService.getQuickStats());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
