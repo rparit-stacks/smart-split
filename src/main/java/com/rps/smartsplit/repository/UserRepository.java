@@ -1,6 +1,5 @@
 package com.rps.smartsplit.repository;
 
-import com.rps.smartsplit.dto.UserResponseDTO;
 import com.rps.smartsplit.model.Role;
 import com.rps.smartsplit.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
