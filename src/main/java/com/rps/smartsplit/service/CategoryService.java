@@ -1,8 +1,8 @@
 package com.rps.smartsplit.service;
 
-import com.rps.smartsplit.dto.CategoryRequestDTO;
-import com.rps.smartsplit.dto.CategoryResponseDTO;
-import com.rps.smartsplit.dto.CategoryUpdateRequest;
+import com.rps.smartsplit.dto.request.CategoryRequestDTO;
+import com.rps.smartsplit.dto.response.CategoryResponseDTO;
+import com.rps.smartsplit.dto.request.CategoryUpdateRequest;
 import com.rps.smartsplit.model.Category;
 import com.rps.smartsplit.repository.CategoryRepository;
 import com.rps.smartsplit.repository.ExpenseRepository;
@@ -41,6 +41,13 @@ public class CategoryService {
     public @Nullable CategoryResponseDTO getCategoryById(UUID id) {
         if(categoryRepository.existsById(id)){
             return modelMapper.map(categoryRepository.findById(id).get(), CategoryResponseDTO.class);
+        }
+        else throw new RuntimeException("Category not found");
+    }
+
+    public @Nullable Category getACategoryById(UUID id) {
+        if(categoryRepository.existsById(id)){
+            return categoryRepository.findById(id).get();
         }
         else throw new RuntimeException("Category not found");
     }
