@@ -1,6 +1,15 @@
 package com.rps.smartsplit.service;
 
-import com.rps.smartsplit.dto.*;
+import com.rps.smartsplit.dto.request.GroupRequestDTO;
+import com.rps.smartsplit.dto.response.GroupResponseDTO;
+import com.rps.smartsplit.dto.response.UserResponseDTO;
+import com.rps.smartsplit.dto.response.ExpenseResponseDTO;
+import com.rps.smartsplit.dto.response.SettlementResponseDTO;
+import com.rps.smartsplit.dto.common.GroupSummaryDTO;
+import com.rps.smartsplit.dto.balance.BalanceDTO;
+import com.rps.smartsplit.dto.balance.GroupBalancesResponseDTO;
+import com.rps.smartsplit.dto.balance.GroupBalanceSummaryDTO;
+import com.rps.smartsplit.dto.balance.UserBalanceDTO;
 import com.rps.smartsplit.model.Expense;
 import com.rps.smartsplit.model.ExpenseParticipant;
 import com.rps.smartsplit.model.Group;
@@ -149,6 +158,11 @@ public class GroupService {
     public GroupResponseDTO getGroupById(UUID groupId) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group not found"));
         return groupToGroupDto(group);
+    }
+
+    public Group getAGroupById(UUID groupId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        return group;
     }
 
     private GroupResponseDTO saveGroupAndUser(Group group, User user) {
