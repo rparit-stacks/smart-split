@@ -1,6 +1,8 @@
 package com.rps.smartsplit.controller;
 
-import com.rps.smartsplit.dto.*;
+import com.rps.smartsplit.dto.request.UserRequestDTO;
+import com.rps.smartsplit.dto.response.UserResponseDTO;
+import com.rps.smartsplit.dto.response.GroupResponseDTO;
 import com.rps.smartsplit.service.UserService;
 import com.rps.smartsplit.config.CustomUserDetail;
 
