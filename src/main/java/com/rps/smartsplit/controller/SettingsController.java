@@ -1,22 +1,36 @@
 package com.rps.smartsplit.controller;
 
+import com.rps.smartsplit.dto.request.SettingsRequestDTO;
+import com.rps.smartsplit.dto.request.CurrencyRequestDTO;
+import com.rps.smartsplit.dto.request.LanguageRequestDTO;
+import com.rps.smartsplit.dto.response.SettingsResponseDTO;
+import com.rps.smartsplit.dto.response.CurrencyResponseDTO;
+import com.rps.smartsplit.dto.response.LanguageResponseDTO;
+import com.rps.smartsplit.dto.settings.NotificationSettingsDTO;
+import com.rps.smartsplit.dto.settings.PrivacySettingsDTO;
+import com.rps.smartsplit.service.SettingsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/settings")
+@RequiredArgsConstructor
 public class SettingsController {
+
+    private final SettingsService settingsService;
 
     /**
      * GET /api/settings
      * Get user settings
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getSettings() {
-        // TODO: Implement get user settings
-        return null;
+    public ResponseEntity<SettingsResponseDTO> getSettings() {
+        try {
+            return ResponseEntity.ok(settingsService.getSettings());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -24,9 +38,12 @@ public class SettingsController {
      * Update user settings
      */
     @PutMapping
-    public ResponseEntity<Map<String, Object>> updateSettings(@RequestBody Map<String, Object> settings) {
-        // TODO: Implement update user settings
-        return null;
+    public ResponseEntity<SettingsResponseDTO> updateSettings(@RequestBody SettingsRequestDTO settingsRequestDTO) {
+        try {
+            return ResponseEntity.ok(settingsService.updateSettings(settingsRequestDTO));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -34,9 +51,12 @@ public class SettingsController {
      * Get notification settings
      */
     @GetMapping("/notifications")
-    public ResponseEntity<Map<String, Object>> getNotificationSettings() {
-        // TODO: Implement get notification settings
-        return null;
+    public ResponseEntity<NotificationSettingsDTO> getNotificationSettings() {
+        try {
+            return ResponseEntity.ok(settingsService.getNotificationSettings());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -44,9 +64,12 @@ public class SettingsController {
      * Update notification settings
      */
     @PutMapping("/notifications")
-    public ResponseEntity<Map<String, Object>> updateNotificationSettings(@RequestBody Map<String, Object> notificationSettings) {
-        // TODO: Implement update notification settings
-        return null;
+    public ResponseEntity<NotificationSettingsDTO> updateNotificationSettings(@RequestBody NotificationSettingsDTO notificationSettingsDTO) {
+        try {
+            return ResponseEntity.ok(settingsService.updateNotificationSettings(notificationSettingsDTO));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -54,9 +77,12 @@ public class SettingsController {
      * Get currency preference
      */
     @GetMapping("/currency")
-    public ResponseEntity<Map<String, Object>> getCurrency() {
-        // TODO: Implement get currency
-        return null;
+    public ResponseEntity<CurrencyResponseDTO> getCurrency() {
+        try {
+            return ResponseEntity.ok(new CurrencyResponseDTO(settingsService.getCurrency()));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -64,9 +90,12 @@ public class SettingsController {
      * Update currency
      */
     @PutMapping("/currency")
-    public ResponseEntity<Map<String, Object>> updateCurrency(@RequestBody Map<String, Object> currency) {
-        // TODO: Implement update currency
-        return null;
+    public ResponseEntity<CurrencyResponseDTO> updateCurrency(@RequestBody CurrencyRequestDTO currencyRequestDTO) {
+        try {
+            return ResponseEntity.ok(new CurrencyResponseDTO(settingsService.updateCurrency(currencyRequestDTO.getCurrency())));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -74,9 +103,12 @@ public class SettingsController {
      * Get language preference
      */
     @GetMapping("/language")
-    public ResponseEntity<Map<String, Object>> getLanguage() {
-        // TODO: Implement get language
-        return null;
+    public ResponseEntity<LanguageResponseDTO> getLanguage() {
+        try {
+            return ResponseEntity.ok(new LanguageResponseDTO(settingsService.getLanguage()));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -84,9 +116,12 @@ public class SettingsController {
      * Update language
      */
     @PutMapping("/language")
-    public ResponseEntity<Map<String, Object>> updateLanguage(@RequestBody Map<String, Object> language) {
-        // TODO: Implement update language
-        return null;
+    public ResponseEntity<LanguageResponseDTO> updateLanguage(@RequestBody LanguageRequestDTO languageRequestDTO) {
+        try {
+            return ResponseEntity.ok(new LanguageResponseDTO(settingsService.updateLanguage(languageRequestDTO.getLanguage())));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -94,9 +129,12 @@ public class SettingsController {
      * Get privacy settings
      */
     @GetMapping("/privacy")
-    public ResponseEntity<Map<String, Object>> getPrivacySettings() {
-        // TODO: Implement get privacy settings
-        return null;
+    public ResponseEntity<PrivacySettingsDTO> getPrivacySettings() {
+        try {
+            return ResponseEntity.ok(settingsService.getPrivacySettings());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -104,9 +142,12 @@ public class SettingsController {
      * Update privacy settings
      */
     @PutMapping("/privacy")
-    public ResponseEntity<Map<String, Object>> updatePrivacySettings(@RequestBody Map<String, Object> privacySettings) {
-        // TODO: Implement update privacy settings
-        return null;
+    public ResponseEntity<PrivacySettingsDTO> updatePrivacySettings(@RequestBody PrivacySettingsDTO privacySettingsDTO) {
+        try {
+            return ResponseEntity.ok(settingsService.updatePrivacySettings(privacySettingsDTO));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
