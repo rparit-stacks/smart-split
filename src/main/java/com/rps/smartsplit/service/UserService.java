@@ -1,14 +1,13 @@
 package com.rps.smartsplit.service;
 
 import com.rps.smartsplit.config.CustomUserDetail;
-import com.rps.smartsplit.dto.GroupResponseDTO;
-import com.rps.smartsplit.config.CustomUserDetail;
-import com.rps.smartsplit.dto.UserRequestDTO;
+import com.rps.smartsplit.dto.response.GroupResponseDTO;
+import com.rps.smartsplit.dto.request.UserRequestDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import com.rps.smartsplit.dto.UserResponseDTO;
+import com.rps.smartsplit.dto.response.UserResponseDTO;
 import com.rps.smartsplit.model.Role;
 import com.rps.smartsplit.model.User;
 import com.rps.smartsplit.repository.UserRepository;
@@ -220,7 +219,7 @@ public class UserService {
     }
 
 
-    private UserResponseDTO UserToUserDto(User user){
+    public UserResponseDTO UserToUserDto(User user){
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setId(user.getId());
         userResponseDTO.setName(user.getName());
