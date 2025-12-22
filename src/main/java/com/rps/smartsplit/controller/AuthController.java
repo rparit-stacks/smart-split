@@ -1,9 +1,9 @@
 package com.rps.smartsplit.controller;
 
 import com.rps.smartsplit.config.CustomUserDetail;
-import com.rps.smartsplit.dto.AuthDto;
-import com.rps.smartsplit.dto.UserRequestDTO;
-import com.rps.smartsplit.dto.UserResponseDTO;
+import com.rps.smartsplit.dto.common.AuthDto;
+import com.rps.smartsplit.dto.request.UserRequestDTO;
+import com.rps.smartsplit.dto.response.UserResponseDTO;
 import com.rps.smartsplit.model.User;
 import com.rps.smartsplit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
