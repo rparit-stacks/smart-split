@@ -1,8 +1,8 @@
 package com.rps.smartsplit.controller;
 
-import com.rps.smartsplit.dto.CategoryRequestDTO;
-import com.rps.smartsplit.dto.CategoryResponseDTO;
-import com.rps.smartsplit.dto.CategoryUpdateRequest;
+import com.rps.smartsplit.dto.request.CategoryRequestDTO;
+import com.rps.smartsplit.dto.response.CategoryResponseDTO;
+import com.rps.smartsplit.dto.request.CategoryUpdateRequest;
 import com.rps.smartsplit.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -77,16 +77,6 @@ public class CategoryController {
 
     }
 
-    /**
-     * DELETE /api/categories/{id}
-     * Delete category (only if no expenses use it)
-     * 
-     * This endpoint handles category deletion. The deletion logic checks for expenses
-     * in CategoryService (not ExpenseService) because:
-     * 1. Category deletion is a category operation (Single Responsibility Principle)
-     * 2. We prevent deletion if expenses exist (preserve data integrity)
-     * 3. Expenses are financial records that should never be deleted automatically
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable UUID id) {
         try {
