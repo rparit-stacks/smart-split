@@ -1,9 +1,13 @@
 package com.rps.smartsplit.controller;
 
-import com.rps.smartsplit.dto.ExpenseRequestDTO;
-import com.rps.smartsplit.dto.ExpenseResponseDTO;
-import com.rps.smartsplit.dto.ExpenseParticipantRequestDTO;
-import com.rps.smartsplit.dto.ExpenseParticipantResponseDTO;
+import com.rps.smartsplit.dto.request.ExpenseRequestDTO;
+import com.rps.smartsplit.dto.response.ExpenseResponseDTO;
+import com.rps.smartsplit.dto.request.ExpenseParticipantRequestDTO;
+import com.rps.smartsplit.dto.response.ExpenseParticipantResponseDTO;
+import com.rps.smartsplit.service.ExpenseService;
+import com.rps.smartsplit.service.ExpenseParticipantService;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,16 +16,23 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/expenses")
+@RequiredArgsConstructor
 public class ExpenseController {
 
+    private final ExpenseService expenseService;
+    private final ExpenseParticipantService expenseParticipantService;
+    private final ModelMapper modelMapper;
     /**
      * POST /api/expenses
      * Create new expense with split logic
      */
     @PostMapping
     public ResponseEntity<ExpenseResponseDTO> createExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO) {
-        // TODO: Implement expense creation with split logic
-        return null;
+        try{
+            return ResponseEntity.ok(expenseService.createExpense(expenseRequestDTO));
+        }catch (RuntimeException e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -30,8 +41,12 @@ public class ExpenseController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ExpenseResponseDTO> getExpense(@PathVariable UUID id) {
-        // TODO: Implement get expense by ID
-        return null;
+        try{
+            return ResponseEntity.ok(modelMapper.map(expenseService.getExpenseById(id), ExpenseResponseDTO.class));
+        }catch (RuntimeException e){
+            throw new RuntimeException(e);
+        }
+
     }
 
     /**
@@ -42,8 +57,11 @@ public class ExpenseController {
     public ResponseEntity<ExpenseResponseDTO> updateExpense(
             @PathVariable UUID id,
             @RequestBody ExpenseRequestDTO expenseRequestDTO) {
-        // TODO: Implement expense update with balance recalculation
-        return null;
+        try {
+            return ResponseEntity.ok(expenseService.updateExpense(id, expenseRequestDTO));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -52,13 +70,17 @@ public class ExpenseController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteExpense(@PathVariable UUID id) {
-        // TODO: Implement expense deletion with balance recalculation
-        return null;
+        try {
+            expenseService.deleteExpense(id);
+            return ResponseEntity.ok("Expense deleted successfully");
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * GET /api/expenses
-     * List expenses with filters (group, user, category, date range, pagination)
+     * List expenses with filters (group, user, category, date range)
      */
     @GetMapping
     public ResponseEntity<List<ExpenseResponseDTO>> getExpenses(
@@ -66,34 +88,39 @@ public class ExpenseController {
             @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) UUID categoryId,
             @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement filtered expense list with pagination
-        return null;
+            @RequestParam(required = false) String endDate) {
+        try {
+            return ResponseEntity.ok(expenseService.getExpenses(groupId, userId, categoryId, startDate, endDate));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * GET /api/expenses/recent
-     * Get recent expenses (last 10-20 across all groups)
+     * Get recent expenses (last 20 across all groups)
      */
     @GetMapping("/recent")
     public ResponseEntity<List<ExpenseResponseDTO>> getRecentExpenses() {
-        // TODO: Implement recent expenses
-        return null;
+        try {
+            return ResponseEntity.ok(expenseService.getRecentExpenses());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * GET /api/expenses/group/{groupId}
-     * Get expenses by group (paginated)
+     * Get expenses by group
      */
     @GetMapping("/group/{groupId}")
     public ResponseEntity<List<ExpenseResponseDTO>> getExpensesByGroup(
-            @PathVariable UUID groupId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement group expenses
-        return null;
+            @PathVariable UUID groupId) {
+        try {
+            return ResponseEntity.ok(expenseService.getExpensesByGroup(groupId));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -102,11 +129,12 @@ public class ExpenseController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ExpenseResponseDTO>> getExpensesByUser(
-            @PathVariable UUID userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement user expenses
-        return null;
+            @PathVariable UUID userId) {
+        try {
+            return ResponseEntity.ok(expenseService.getExpensesByUser(userId));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -115,11 +143,12 @@ public class ExpenseController {
      */
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ExpenseResponseDTO>> getExpensesByCategory(
-            @PathVariable UUID categoryId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement category expenses
-        return null;
+            @PathVariable UUID categoryId) {
+        try {
+            return ResponseEntity.ok(expenseService.getExpensesByCategory(categoryId));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -129,11 +158,12 @@ public class ExpenseController {
     @GetMapping("/date-range")
     public ResponseEntity<List<ExpenseResponseDTO>> getExpensesByDateRange(
             @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement date range expenses
-        return null;
+            @RequestParam String endDate) {
+        try {
+            return ResponseEntity.ok(expenseService.getExpensesByDateRange(startDate, endDate));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -142,8 +172,11 @@ public class ExpenseController {
      */
     @PatchMapping("/{id}/mark-paid")
     public ResponseEntity<ExpenseResponseDTO> markExpenseAsPaid(@PathVariable UUID id) {
-        // TODO: Implement mark expense as paid
-        return null;
+        try {
+            return ResponseEntity.ok(expenseService.markExpenseAsPaid(id));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -152,8 +185,11 @@ public class ExpenseController {
      */
     @GetMapping("/{id}/participants")
     public ResponseEntity<List<ExpenseParticipantResponseDTO>> getExpenseParticipants(@PathVariable UUID id) {
-        // TODO: Implement get expense participants
-        return null;
+        try {
+            return ResponseEntity.ok(expenseParticipantService.getParticipantsByExpenseId(id));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -165,8 +201,11 @@ public class ExpenseController {
             @PathVariable UUID id,
             @PathVariable UUID participantId,
             @RequestBody ExpenseParticipantRequestDTO participantRequestDTO) {
-        // TODO: Implement update participant status
-        return null;
+        try {
+            return ResponseEntity.ok(expenseParticipantService.updateParticipantStatus(participantId, participantRequestDTO.isPaid()));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -178,8 +217,11 @@ public class ExpenseController {
             @PathVariable UUID id,
             @PathVariable UUID participantId,
             @RequestBody ExpenseParticipantRequestDTO participantRequestDTO) {
-        // TODO: Implement update participant amount
-        return null;
+        try {
+            return ResponseEntity.ok(expenseParticipantService.updateParticipantAmount(participantId, participantRequestDTO.getAmount()));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -190,8 +232,12 @@ public class ExpenseController {
     public ResponseEntity<String> removeParticipant(
             @PathVariable UUID id,
             @PathVariable UUID participantId) {
-        // TODO: Implement remove participant
-        return null;
+        try {
+            expenseParticipantService.removeParticipant(participantId);
+            return ResponseEntity.ok("Participant removed successfully");
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
