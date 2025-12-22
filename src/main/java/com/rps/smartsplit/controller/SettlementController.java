@@ -1,9 +1,12 @@
 package com.rps.smartsplit.controller;
 
-import com.rps.smartsplit.dto.SettlementRequestDTO;
-import com.rps.smartsplit.dto.SettlementResponseDTO;
-import com.rps.smartsplit.dto.PaymentRequestDTO;
-import com.rps.smartsplit.dto.PaymentResponseDTO;
+import com.rps.smartsplit.dto.request.SettlementRequestDTO;
+import com.rps.smartsplit.dto.response.SettlementResponseDTO;
+import com.rps.smartsplit.dto.request.PaymentRequestDTO;
+import com.rps.smartsplit.dto.response.PaymentResponseDTO;
+import com.rps.smartsplit.service.SettlementService;
+import com.rps.smartsplit.service.PaymentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +15,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/settlements")
+@RequiredArgsConstructor
 public class SettlementController {
+
+    private final SettlementService settlementService;
+    private final PaymentService paymentService;
 
     /**
      * POST /api/settlements
@@ -20,8 +27,11 @@ public class SettlementController {
      */
     @PostMapping
     public ResponseEntity<SettlementResponseDTO> createSettlement(@RequestBody SettlementRequestDTO settlementRequestDTO) {
-        // TODO: Implement settlement creation with balance updates
-        return null;
+        try {
+            return ResponseEntity.ok(settlementService.createSettlement(settlementRequestDTO));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -30,30 +40,28 @@ public class SettlementController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<SettlementResponseDTO> getSettlement(@PathVariable UUID id) {
-        // TODO: Implement get settlement by ID
-        return null;
-    }
-
-    /**
-     * PUT /api/settlements/{id}
-     * Update settlement (recalculate balances)
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<SettlementResponseDTO> updateSettlement(
-            @PathVariable UUID id,
-            @RequestBody SettlementRequestDTO settlementRequestDTO) {
-        // TODO: Implement settlement update with balance recalculation
-        return null;
+        try {
+            return ResponseEntity.ok(settlementService.settlementToSettlementDto(settlementService.getSettlementById(id)));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * DELETE /api/settlements/{id}
      * Delete/undo settlement (revert balance changes)
+     * 
+     * Note: This should ideally be admin-only to prevent unauthorized deletion
+     * of financial records. Used for removing duplicates or incorrect settlements.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSettlement(@PathVariable UUID id) {
-        // TODO: Implement settlement deletion with balance reversion
-        return null;
+        try {
+            settlementService.deleteSettlement(id);
+            return ResponseEntity.ok("Settlement deleted successfully");
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -65,11 +73,12 @@ public class SettlementController {
             @RequestParam(required = false) UUID groupId,
             @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement filtered settlement list
-        return null;
+            @RequestParam(required = false) String endDate) {
+        try {
+            return ResponseEntity.ok(settlementService.getSettlements(groupId, userId, startDate, endDate));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -78,11 +87,12 @@ public class SettlementController {
      */
     @GetMapping("/group/{groupId}")
     public ResponseEntity<List<SettlementResponseDTO>> getSettlementsByGroup(
-            @PathVariable UUID groupId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement group settlements
-        return null;
+            @PathVariable UUID groupId) {
+        try {
+            return ResponseEntity.ok(settlementService.getSettlementsByGroup(groupId));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -91,11 +101,12 @@ public class SettlementController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<SettlementResponseDTO>> getSettlementsByUser(
-            @PathVariable UUID userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        // TODO: Implement user settlements
-        return null;
+            @PathVariable UUID userId) {
+        try {
+            return ResponseEntity.ok(settlementService.getSettlementsByUser(userId));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -105,8 +116,11 @@ public class SettlementController {
     @PostMapping("/bulk")
     public ResponseEntity<List<SettlementResponseDTO>> createBulkSettlements(
             @RequestBody List<SettlementRequestDTO> settlementRequestDTOs) {
-        // TODO: Implement bulk settlement creation
-        return null;
+        try {
+            return ResponseEntity.ok(settlementService.createBulkSettlements(settlementRequestDTOs));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -117,8 +131,11 @@ public class SettlementController {
     public ResponseEntity<PaymentResponseDTO> recordPayment(
             @PathVariable UUID id,
             @RequestBody PaymentRequestDTO paymentRequestDTO) {
-        // TODO: Implement payment recording
-        return null;
+        try {
+            return ResponseEntity.ok(paymentService.createPayment(id, paymentRequestDTO));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -127,8 +144,11 @@ public class SettlementController {
      */
     @GetMapping("/{id}/payments")
     public ResponseEntity<List<PaymentResponseDTO>> getSettlementPayments(@PathVariable UUID id) {
-        // TODO: Implement get settlement payments
-        return null;
+        try {
+            return ResponseEntity.ok(paymentService.getPaymentsBySettlementId(id));
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
