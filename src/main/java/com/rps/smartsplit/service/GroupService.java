@@ -83,8 +83,8 @@ public class GroupService {
             throw new IllegalArgumentException("User not found");
         }
 
-        // Check if user is already a member
-        if (group.getUsers().contains(user)) {
+        // Check if user is already a member by checking user's groups
+        if (user.getGroups().contains(group)) {
             throw new IllegalArgumentException("User is already a member of the group");
         }
 
@@ -101,8 +101,8 @@ public class GroupService {
             throw new IllegalArgumentException("User not found");
         }
 
-        // Check if user is a member of the group
-        if (!group.getUsers().contains(user)) {
+        // Check if user is a member by checking user's groups
+        if (!user.getGroups().contains(group)) {
             throw new IllegalArgumentException("User is not a member of the group");
         }
 
@@ -125,7 +125,8 @@ public class GroupService {
 //            throw new IllegalArgumentException("You are not the logged in user, please login again");
 //        }
 
-        if (!group.getUsers().contains(user)) {
+        // Check if user is a member by checking user's groups
+        if (!user.getGroups().contains(group)) {
             throw new IllegalArgumentException("User is not a member of the group");
         }
         group.removeUser(user);
@@ -166,8 +167,13 @@ public class GroupService {
     }
 
     private GroupResponseDTO saveGroupAndUser(Group group, User user) {
+        // Save group first to get the ID
         Group savedGroup = groupRepository.save(group);
+        // Save user - since User is the owner of the relationship (@JoinTable),
+        // saving it will update the join table based on user.getGroups()
+        // We only modify user.getGroups(), not group.getUsers(), to avoid collection sharing issues
         userService.saveUser(user);
+        // Return DTO using saved group ID
         return groupToGroupDto(savedGroup);
     }
 

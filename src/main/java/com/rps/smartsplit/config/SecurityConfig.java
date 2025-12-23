@@ -16,10 +16,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,8 +54,15 @@ public class SecurityConfig {
                         "/api/auth/verify-email-otp",
                         "/api/auth/verify-mobile-otp",
                         "/api/auth/resend-email-otp",
-                        "/api/auth/resend-mobile-otp"
+                        "/api/auth/resend-mobile-otp",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
                 ).permitAll().anyRequest().authenticated())
+                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler()))
                 .build();
 
     }
@@ -101,6 +112,21 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) -> {
+            System.err.println("❌ ACCESS DENIED - URI: " + request.getRequestURI());
+            System.err.println("❌ ACCESS DENIED - Method: " + request.getMethod());
+            System.err.println("❌ ACCESS DENIED - User: " + (request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "Anonymous"));
+            System.err.println("❌ ACCESS DENIED - Error: " + accessDeniedException.getMessage());
+            accessDeniedException.printStackTrace();
+            
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"Access Denied\",\"message\":\"" + accessDeniedException.getMessage() + "\",\"path\":\"" + request.getRequestURI() + "\"}");
+        };
     }
 
 }

@@ -14,10 +14,14 @@ public class AuditAware implements AuditorAware<User> {
     @Autowired
     private UserService userService;
 
-
-
     @Override
     public Optional<User> getCurrentAuditor() {
-        return Optional.ofNullable(userService.getLoggedInUser());
+        try {
+            return Optional.ofNullable(userService.getLoggedInUser());
+        } catch (Exception e) {
+            // Return empty if user is not authenticated (e.g., during registration)
+            // This allows public endpoints to work without authentication
+            return Optional.empty();
+        }
     }
 }

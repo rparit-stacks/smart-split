@@ -7,6 +7,7 @@ import com.rps.smartsplit.model.Settlement;
 import com.rps.smartsplit.model.User;
 import com.rps.smartsplit.repository.SettlementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class SettlementService {
     private SettlementRepository settlementRepository;
 
     @Autowired
+    @Lazy
     private GroupService groupService;
 
     @Autowired

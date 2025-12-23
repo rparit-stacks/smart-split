@@ -80,12 +80,14 @@ public class Group extends Audit {
     }
 
     public void addUser(User user) {
-        users.add(user);
+        // Only modify the owner side (User's groups collection)
+        // This avoids Hibernate collection sharing issues
         user.getGroups().add(this);
     }
 
     public void removeUser(User user) {
-        this.users.remove(user);
+        // Only modify the owner side (User's groups collection)
+        // This avoids Hibernate collection sharing issues
         user.getGroups().remove(this);
     }
 }

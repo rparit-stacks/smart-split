@@ -6,6 +6,7 @@ import com.rps.smartsplit.model.*;
 import com.rps.smartsplit.repository.ExpenseRepository;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class ExpenseService {
     @Autowired
     private ExpenseRepository expenseRepository;
     @Autowired
+    @Lazy
     private GroupService groupService;
     @Autowired
     private UserService userService;
